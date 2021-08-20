@@ -1,11 +1,14 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 from urllib import request
+from dotenv import load_dotenv
+import os
 import time
 
+load_dotenv(verbose=True)
 
 def search_book_library(keyword):
-  chrome_driver_dir = '/Users/sangyuplee/KoreaUniv/DevKor/bookitout/chromedriver'
+  chrome_driver_dir = os.getenv('CHROME_DRIVER_DIR')
   options = webdriver.ChromeOptions()
   options.add_argument('--headless')
   wd = webdriver.Chrome(chrome_driver_dir, options=options)
@@ -38,3 +41,5 @@ def search_book_library(keyword):
     # print('=========================')
 
   return list
+
+def status_book_library(index, link): return

@@ -6,12 +6,12 @@ import os
 import time
 
 load_dotenv(verbose=True)
+chrome_driver_dir = os.getenv('CHROME_DRIVER_DIR')
+options = webdriver.ChromeOptions()
+options.add_argument('--headless')
+wd = webdriver.Chrome(chrome_driver_dir, options=options)
 
 def search_book_library(keyword):
-  chrome_driver_dir = os.getenv('CHROME_DRIVER_DIR')
-  options = webdriver.ChromeOptions()
-  # options.add_argument('--headless')
-  wd = webdriver.Chrome(chrome_driver_dir, options=options)
   wd.get('https://library.korea.ac.kr/datause/advanced-search/advanced-search-form/')
 
   name_input = wd.find_element_by_css_selector('#item-search-keyword-1')
@@ -35,11 +35,29 @@ def search_book_library(keyword):
     dic['author'] = author.strip()
     dic['link'] = link.strip()
     lst.append(dic)
-    # print(title.strip())
-    # print(author.strip())
-    # print(link)
-    # print('=========================')
 
   return lst
 
-def status_book_library(index, link): return
+def status_book_library(link): 
+  detail_link = "https://library.korea.ac.kr"+link
+  wd.get(detail_link)
+  html = wd.page_source
+  soup = BeautifulSoup(html, 'html.parser')
+  details = soup.select("#locs-1 > div > table > tbody > tr")
+  lst = []
+
+  for detail in details:
+    dic = {}
+    tds = detail.select("td")
+    for i in range(5):
+      col = tds[i].text.split()
+      if col[0] == '청구기호':
+        cols = ''
+        for i in range(1, len(col)):
+          cols = cols + ' ' + col[i]
+        dic[col[0]] = cols.lstrip()
+      else:
+        dic[col[0]] = col[1]
+    lst.append(dic)
+    
+  return lst

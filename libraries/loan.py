@@ -49,7 +49,7 @@ def status_book_library(link):
   for detail in details:
     dic = {}
     tds = detail.select("td")
-    for i in range(5):
+    for i in range(6):
       col = tds[i].text.split()
       if col[0] == '청구기호':
         cols = ''
@@ -58,6 +58,8 @@ def status_book_library(link):
         dic[col[0]] = cols.lstrip()
       else:
         dic[col[0]] = col[1]
+        if col[1] == '대출가능':
+          break
     lst.append(dic)
-    
+
   return lst

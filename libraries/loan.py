@@ -10,7 +10,7 @@ load_dotenv(verbose=True)
 def search_book_library(keyword):
   chrome_driver_dir = os.getenv('CHROME_DRIVER_DIR')
   options = webdriver.ChromeOptions()
-  options.add_argument('--headless')
+  # options.add_argument('--headless')
   wd = webdriver.Chrome(chrome_driver_dir, options=options)
   wd.get('https://library.korea.ac.kr/datause/advanced-search/advanced-search-form/')
 
@@ -24,7 +24,7 @@ def search_book_library(keyword):
   html = wd.page_source
   soup = BeautifulSoup(html, 'html.parser')
   items = soup.select('#post-193 > div.entry-content > div.content > div > div > div.col-lg-9 > div.items.list > div.item.book')
-  list = []
+  lst = []
 
   for item in items:
     dic = {}
@@ -34,12 +34,12 @@ def search_book_library(keyword):
     dic['title'] = title.strip()
     dic['author'] = author.strip()
     dic['link'] = link.strip()
-    list.append(dic)
+    lst.append(dic)
     # print(title.strip())
     # print(author.strip())
     # print(link)
     # print('=========================')
 
-  return list
+  return lst
 
 def status_book_library(index, link): return

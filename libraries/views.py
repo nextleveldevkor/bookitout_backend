@@ -14,7 +14,8 @@ def book_view(request):
   else:
     keyword = request.data['search_title']
     list_book_library = loan.search_book_library(keyword)
-    print(list_book_library)
+    if not list_book_library:
+      return Response({"Error" : "No search results"})
     return Response(list_book_library)
 
 @csrf_exempt

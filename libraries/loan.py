@@ -4,6 +4,7 @@ from urllib import request
 from dotenv import load_dotenv
 import os
 import time
+import re
 
 load_dotenv(verbose=True)
 chrome_driver_dir = os.getenv('CHROME_DRIVER_DIR')
@@ -40,9 +41,16 @@ def search_book_library(keyword):
     title = item.select_one('div.item-data.d-flex > div.item-meta > div.item-title').text
     author = item.select_one('div.item-data.d-flex > div.item-meta > div.item-author').text
     link = item.select_one('div.item-data.d-flex > div.item-cover > a').attrs['href']
+    try:
+        img_link = item.select_one("div.item-data.d-flex > div.item-cover > a > div").attrs['style']
+        img_link = re.findall('\(([^)]+)', img_link)
+        if img_link[0][0] != 'h': img_link=["No Image"]
+    except:
+        img_link = ["No Image"]
     dic['title'] = title.strip()
     dic['author'] = author.strip()
     dic['link'] = link.strip()
+    dic['img_link'] = img_link[0]
     cols = item.select("div.item-data.d-flex > div.item-meta > div.item-loc > div.item-loc-contents > div > div > table > tbody")
     for col in cols:
         status = col.select("tr > td")[4].text.split()

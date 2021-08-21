@@ -1,16 +1,16 @@
-from rest_framework import decorators, mixins, serializers
-from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView
-from rest_framework.viewsets import GenericViewSet, ModelViewSet
-from rest_framework.response import Response
+from rest_framework import decorators, mixins
+from rest_framework.viewsets import GenericViewSet
 from django.db.models import Count
 
-from customer.serializer import BooksSerializer, BooksSerializerGroup, Books
+from customer.models import Books
+from customer.serializer import BooksSerializer, BooksSerializerGroup
+from customer.filter import BooksFilter
 
 class BooksViewSet(GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
   queryset = Books.objects.all().order_by('-id')
   serializer_class = BooksSerializer
-
+  filterset_class = BooksFilter
+  
 
 
 

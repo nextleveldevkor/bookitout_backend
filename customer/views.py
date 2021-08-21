@@ -39,5 +39,4 @@ class BooksSearchViewSet(GenericViewSet, mixins.ListModelMixin):
     serializer = BooksSerializer(queryset, many=True)
     return Response(serializer.data)
 
-# self.get_queryset(group=False)
 # Create your views here.

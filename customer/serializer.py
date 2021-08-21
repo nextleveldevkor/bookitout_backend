@@ -11,4 +11,4 @@ class BooksSerializerGroup(serializers.ModelSerializer):
   count = serializers.IntegerField()
   class Meta:
     model = Books
-    fields=('title', 'count')
+    fields=('title', 'author', 'count')

@@ -12,6 +12,22 @@ options = webdriver.ChromeOptions()
 options.add_argument('--headless')
 wd = webdriver.Chrome(chrome_driver_dir, options=options)
 
+def merge_data(lst):
+  new_lst=[lst[0]]
+
+  for v in lst[1:]:
+    flag = True
+    for i in new_lst:
+      if i['title'] == v['title'] and i['author'] == v['author']:
+        i['available'] += v['available']
+        i['link'] = i['link'] + '+' + v['link']
+        flag = False
+        break
+    if flag:
+      new_lst.append(v)
+
+  return new_lst
+
 def search_book_library(keyword):
   wd.get('https://library.korea.ac.kr/datause/advanced-search/advanced-search-form/')
 
@@ -58,30 +74,35 @@ def search_book_library(keyword):
     dic['available'] = loan_available
     lst.append(dic)
 
+  if lst:
+    lst = merge_data(lst)
+
   return lst
 
-def status_book_library(link): 
-  detail_link = "https://library.korea.ac.kr"+link
-  wd.get(detail_link)
-  html = wd.page_source
-  soup = BeautifulSoup(html, 'html.parser')
-  details = soup.select("#locs-1 > div > table > tbody > tr")
+def status_book_library(link):
+  links = link.split('+')
   lst = []
+  for link in links:
+    detail_link = "https://library.korea.ac.kr"+link
+    wd.get(detail_link)
+    html = wd.page_source
+    soup = BeautifulSoup(html, 'html.parser')
+    details = soup.select("#locs-1 > div > table > tbody > tr")
 
-  for detail in details:
-    dic = {}
-    tds = detail.select("td")
-    for i in range(6):
-      col = tds[i].text.split()
-      if col[0] == '청구기호':
-        cols = ''
-        for i in range(1, len(col)):
-          cols = cols + ' ' + col[i]
-        dic[col[0]] = cols.lstrip()
-      else:
-        dic[col[0]] = col[1]
-        if col[0] == '도서상태' and col[1] != '대출중':
-          break
-    lst.append(dic)
+    for detail in details:
+      dic = {}
+      tds = detail.select("td")
+      for i in range(1, 6):
+        col = tds[i].text.split()
+        if col[0] == '청구기호':
+          cols = ''
+          for i in range(1, len(col)):
+            cols = cols + ' ' + col[i]
+          dic[col[0]] = cols.lstrip()
+        else:
+          dic[col[0]] = col[1]
+          if col[0] == '도서상태' and col[1] != '대출중':
+            break
+      lst.append(dic)
 
   return lst

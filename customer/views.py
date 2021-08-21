@@ -1,15 +1,17 @@
 from django.db.models.query import QuerySet
-from rest_framework import decorators, mixins, serializers
+from rest_framework import decorators, mixins, pagination, serializers
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from django.db.models import Count
 from customer.models import Books
 from customer.serializer import BooksSerializer, BooksSerializerGroup
 from customer.filter import BooksFilter
+from customer.pagination import BooksPagination
 
 class BooksViewSet(GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin):
   queryset = Books.objects.all().order_by('-id')
   serializer_class = BooksSerializer
+  pagination_class = BooksPagination
   
 class BooksSearchViewSet(GenericViewSet, mixins.ListModelMixin):
   

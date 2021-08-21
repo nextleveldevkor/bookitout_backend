@@ -8,6 +8,11 @@ class BooksFilter(filters.FilterSet):
     field_name='title',
     label='title'
   )
+  author = filters.CharFilter(
+    field_name='author',
+    label='author'
+  )
+
   class Meta:
     model = Books
     fields = {

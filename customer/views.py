@@ -10,17 +10,20 @@ from customer.serializer import BooksSerializer, BooksSerializerGroup, Books
 
 class BooksView(APIView):
   queryset = Books.objects.all().order_by('-id')
-
+  serializer_class = BooksSerializer
+  
   def post(self, request):
-    serializer = BooksSerializer(data=request.data)
+    serializer = self.serializer_class(data=request.data)
     if serializer.is_valid():
       serializer.save()
       return Response(serializer.data)
     return Response(serializer.errors)
 
   def get(self, request):
-    serializer = BooksSerializer(self.queryset.all(), many=True)
+    serializer = self.serializer_class(self.queryset.all(), many=True)
     return Response(serializer.data)
+
+
 
 # newQuery = Books.objects.values('title').annotate(dcount=Count('title'))
 #     print(newQuery)

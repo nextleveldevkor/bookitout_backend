@@ -3,4 +3,4 @@ from customer.models import Books
 
 
 class BooksPagination(PageNumberPagination):
-  page_size=12
+    page_size = 12
